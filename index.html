@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#FAF8F5" />
+  <title>acredo — 고객 경험 설문</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Landing -->
+    <section class="view view--active" id="view-landing" aria-labelledby="landing-title">
+      <div class="view__inner">
+        <header class="brand">
+          <p class="brand__wordmark" aria-label="acredo">acredo</p>
+          <p class="brand__tagline">사랑이 모두 다르듯, 웨딩밴드도 다르게</p>
+        </header>
+
+        <div class="card card--intro">
+          <p class="eyebrow">Customer Experience</p>
+          <h1 class="title" id="landing-title">고객 경험 설문</h1>
+          <p class="lead">
+            맞춤 웨딩밴드를 선택해 주셔서 감사합니다.<br />
+            두 분만의 여정을 더 특별하게 만들기 위한<br />
+            짧은 경험 설문에 참여해 주세요.
+          </p>
+          <p class="meta">약 1–2분 · 인적사항 + 4문항</p>
+          <button type="button" class="btn btn--primary" id="btn-start">
+            설문 시작하기
+          </button>
+        </div>
+
+        <p class="footer-note">Unique one for the two</p>
+      </div>
+    </section>
+
+    <!-- Survey (인적사항 + questions) -->
+    <section class="view" id="view-survey" aria-labelledby="survey-question" hidden>
+      <div class="view__inner view__inner--survey">
+        <header class="survey-header">
+          <p class="brand__wordmark brand__wordmark--sm">acredo</p>
+          <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" aria-label="설문 진행도">
+            <div class="progress__track">
+              <div class="progress__fill" id="progress-fill"></div>
+            </div>
+            <p class="progress__label"><span id="step-current">1</span> / <span id="step-total">5</span></p>
+          </div>
+        </header>
+
+        <div class="card card--question">
+          <h2 class="question" id="survey-question"></h2>
+
+          <!-- 인적사항 form -->
+          <div class="personal-form" id="survey-personal" hidden>
+            <div class="field">
+              <label class="field__label" for="field-name">이름 <span class="field__req" aria-hidden="true">*</span></label>
+              <input
+                type="text"
+                id="field-name"
+                class="field__input"
+                name="name"
+                autocomplete="name"
+                placeholder="성함을 입력해 주세요"
+                maxlength="40"
+                required
+              />
+            </div>
+            <div class="field">
+              <label class="field__label" for="field-phone">연락처 <span class="field__req" aria-hidden="true">*</span></label>
+              <input
+                type="tel"
+                id="field-phone"
+                class="field__input"
+                name="phone"
+                autocomplete="tel"
+                inputmode="tel"
+                placeholder="010-0000-0000"
+                maxlength="20"
+                required
+              />
+              <p class="field__hint">숫자와 - 만 입력해 주세요</p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="field-email">이메일 <span class="field__opt">(선택)</span></label>
+              <input
+                type="email"
+                id="field-email"
+                class="field__input"
+                name="email"
+                autocomplete="email"
+                placeholder="name@example.com"
+                maxlength="80"
+              />
+            </div>
+            <div class="field field--purpose">
+              <label class="field__label" for="field-purpose-text">방문 / 상담 목적 <span class="field__opt">(선택)</span></label>
+              <textarea
+                id="field-purpose-text"
+                class="field__input"
+                name="purpose"
+                rows="3"
+                maxlength="200"
+                placeholder="방문이나 상담 목적을 적어 주세요"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="options" id="survey-options" role="group" aria-labelledby="survey-question"></div>
+          <div class="text-answer" id="survey-text" hidden>
+            <label class="sr-only" for="text-input">답변 입력</label>
+            <textarea
+              id="text-input"
+              class="text-input"
+              rows="3"
+              maxlength="200"
+              placeholder="한 줄로 적어 주세요"
+            ></textarea>
+            <p class="char-count"><span id="char-count">0</span>/200</p>
+          </div>
+        </div>
+
+        <nav class="survey-nav">
+          <button type="button" class="btn btn--ghost" id="btn-back">이전</button>
+          <button type="button" class="btn btn--primary" id="btn-next" disabled>다음</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Interstitial -->
+    <section class="view" id="view-interstitial" aria-live="polite" hidden>
+      <div class="view__inner view__inner--center">
+        <div class="interstitial">
+          <div class="ring-loader" aria-hidden="true">
+            <span class="ring-loader__outer"></span>
+            <span class="ring-loader__inner"></span>
+          </div>
+          <p class="interstitial__text" id="interstitial-text">
+            답변을 바탕으로<br />두 분만의 이야기를 정리하고 있어요…
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Proposal reveal -->
+    <section class="view" id="view-proposal" aria-labelledby="proposal-title" hidden>
+      <div class="view__inner view__inner--center">
+        <div class="proposal" id="proposal-card">
+          <p class="brand__wordmark brand__wordmark--sm">acredo</p>
+          <div class="proposal__ornament" aria-hidden="true">◆</div>
+          <h2 class="proposal__title" id="proposal-title"></h2>
+          <p class="proposal__body" id="proposal-body"></p>
+          <div class="proposal__actions">
+            <button type="button" class="btn btn--primary btn--lg" id="btn-yes">네</button>
+            <button type="button" class="btn btn--ghost" id="btn-maybe">한 번 더 생각해볼게요</button>
+          </div>
+          <p class="proposal__nudge" id="proposal-nudge" hidden></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Celebration overlay -->
+    <div class="celebration" id="celebration" hidden aria-live="assertive">
+      <div class="celebration__confetti" id="confetti" aria-hidden="true"></div>
+      <div class="celebration__message">
+        <p class="celebration__heart" aria-hidden="true">♥</p>
+        <h2 class="celebration__title">감사합니다.</h2>
+        <p class="celebration__sub" id="celebration-sub">당신과 함께하는 평생을 약속할게요.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
