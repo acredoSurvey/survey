@@ -17,7 +17,7 @@
     <section class="view view--active" id="view-landing" aria-labelledby="landing-title">
       <div class="view__inner">
         <header class="brand">
-          <p class="brand__wordmark" aria-label="acredo">acredo</p>
+          <img class="brand__logo" src="logo.png" alt="acredo" width="180" height="135" decoding="async" />
           <p class="brand__tagline">사랑이 모두 다르듯, 웨딩밴드도 다르게</p>
         </header>
 
@@ -29,7 +29,11 @@
             두 분만의 여정을 더 특별하게 만들기 위한<br />
             짧은 경험 설문에 참여해 주세요.
           </p>
-          <p class="meta">약 1–2분 · 인적사항 + 4문항</p>
+          <p class="meta">약 2–3분 · 인적사항 + 8문항</p>
+          <p class="reward" id="landing-reward">
+            <span class="reward__badge">참여 혜택</span>
+            설문 완료 시 <strong>스타벅스 아메리카노 Tall</strong>을 증정해드립니다.
+          </p>
           <button type="button" class="btn btn--primary" id="btn-start">
             설문 시작하기
           </button>
@@ -43,12 +47,12 @@
     <section class="view" id="view-survey" aria-labelledby="survey-question" hidden>
       <div class="view__inner view__inner--survey">
         <header class="survey-header">
-          <p class="brand__wordmark brand__wordmark--sm">acredo</p>
-          <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" aria-label="설문 진행도">
+          <img class="brand__logo brand__logo--sm" src="logo.png" alt="acredo" width="120" height="90" decoding="async" />
+          <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="9" aria-valuenow="1" aria-label="설문 진행도">
             <div class="progress__track">
               <div class="progress__fill" id="progress-fill"></div>
             </div>
-            <p class="progress__label"><span id="step-current">1</span> / <span id="step-total">5</span></p>
+            <p class="progress__label"><span id="step-current">1</span> / <span id="step-total">9</span></p>
           </div>
         </header>
 
@@ -80,10 +84,10 @@
                 autocomplete="tel"
                 inputmode="tel"
                 placeholder="010-0000-0000"
-                maxlength="20"
+                maxlength="13"
                 required
               />
-              <p class="field__hint">숫자와 - 만 입력해 주세요</p>
+              <p class="field__hint">숫자만 입력해주세요</p>
             </div>
             <div class="field">
               <label class="field__label" for="field-email">이메일 <span class="field__opt">(선택)</span></label>
@@ -140,7 +144,7 @@
             <span class="ring-loader__inner"></span>
           </div>
           <p class="interstitial__text" id="interstitial-text">
-            답변을 바탕으로<br />두 분만의 이야기를 정리하고 있어요…
+            설문 내용을 저장하고<br />전송하는 중이에요…
           </p>
         </div>
       </div>
@@ -148,28 +152,35 @@
 
     <!-- Proposal reveal -->
     <section class="view" id="view-proposal" aria-labelledby="proposal-title" hidden>
-      <div class="view__inner view__inner--center">
-        <div class="proposal" id="proposal-card">
-          <p class="brand__wordmark brand__wordmark--sm">acredo</p>
-          <div class="proposal__ornament" aria-hidden="true">◆</div>
-          <h2 class="proposal__title" id="proposal-title"></h2>
-          <p class="proposal__body" id="proposal-body"></p>
-          <div class="proposal__actions">
-            <button type="button" class="btn btn--primary btn--lg" id="btn-yes">네</button>
-            <button type="button" class="btn btn--ghost" id="btn-maybe">한 번 더 생각해볼게요</button>
+      <div class="proposal-stage" id="proposal-stage">
+        <div class="proposal-vignette" aria-hidden="true"></div>
+        <div class="proposal-glow" aria-hidden="true"></div>
+        <div class="proposal-shimmer" id="proposal-shimmer" aria-hidden="true"></div>
+        <div class="view__inner view__inner--center">
+          <div class="proposal proposal--focus" id="proposal-card">
+            <!-- logo / rings / ornament hidden for one-line focus mode -->
+            <img class="brand__logo brand__logo--sm proposal__wordmark" id="proposal-wordmark" src="logo.png" alt="" width="120" height="90" decoding="async" hidden aria-hidden="true" />
+            <h2 class="sr-only" id="proposal-title"></h2>
+            <div class="proposal__focus" id="proposal-focus" aria-live="polite"></div>
+            <div class="proposal__body" id="proposal-body" hidden aria-hidden="true"></div>
+            <div class="proposal__actions" id="proposal-actions">
+              <button type="button" class="btn btn--primary btn--lg btn--yes" id="btn-yes">네</button>
+              <button type="button" class="btn btn--ghost btn--quiet" id="btn-maybe">한 번 더 생각해볼게요</button>
+            </div>
+            <p class="proposal__nudge" id="proposal-nudge" hidden></p>
           </div>
-          <p class="proposal__nudge" id="proposal-nudge" hidden></p>
         </div>
       </div>
     </section>
 
     <!-- Celebration overlay -->
     <div class="celebration" id="celebration" hidden aria-live="assertive">
+      <div class="celebration__glow" aria-hidden="true"></div>
       <div class="celebration__confetti" id="confetti" aria-hidden="true"></div>
-      <div class="celebration__message">
+      <div class="celebration__message" id="celebration-message">
         <p class="celebration__heart" aria-hidden="true">♥</p>
-        <h2 class="celebration__title">감사합니다.</h2>
-        <p class="celebration__sub" id="celebration-sub">당신과 함께하는 평생을 약속할게요.</p>
+        <h2 class="celebration__title" id="celebration-title">사랑해, 그린</h2>
+        <p class="celebration__sub" id="celebration-sub">앞으로의 모든 날을 너랑 함께할게</p>
       </div>
     </div>
   </div>
