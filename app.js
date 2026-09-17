@@ -129,19 +129,19 @@ const CONFIG = {
      photos/ 폴더의 파일을 실제 사진으로 바꾸거나 images 경로를 수정하세요 */
   polaroids: {
     enabled: true,
-    images: [
-      "photos/photo-1.jpg",
-      "photos/photo-2.jpg",
-      "photos/photo-3.jpg",
-      "photos/photo-4.jpg",
-      "photos/photo-5.jpg",
-      "photos/photo-6.jpg",
-    ],
+    /* photos/photo-1.jpg … photo-N.jpg 자동 사용 — 개수만 올리면 됨 (50장+ OK) */
+    photoCount: 6,
+    photoPattern: "photos/photo-{n}.jpg",
+    /* 경로를 직접 넣을 거면 여기 적기 (있으면 photoCount 무시) */
+    images: [],
     startDelayMs: 0,
-    spawnEveryMs: 520,
+    spawnEveryMs: 700,
     fallDurationMinMs: 11000,
     fallDurationMaxMs: 16000,
-    maxOnScreen: 12,
+    /* 동시 개수·간격 제한으로 겹침 최소화 */
+    maxOnScreen: 8,
+    maxInTopThird: 3,
+    minLaneSepPct: 16,
   },
 };
 
@@ -790,22 +790,37 @@ const CONFIG = {
   let polaroidTimers = [];
   let polaroidSpawnTimer = null;
   let polaroidActive = false;
-  let polaroidImgCursor = 0;
 
   function polaroidConfig() {
     const p = CONFIG.polaroids || {};
     return {
       enabled: p.enabled !== false,
-      images: Array.isArray(p.images) ? p.images.filter(Boolean) : [],
-      startDelayMs: p.startDelayMs != null ? p.startDelayMs : 400,
-      spawnEveryMs: p.spawnEveryMs != null ? p.spawnEveryMs : 520,
+      images: resolvePolaroidImages(p),
+      startDelayMs: p.startDelayMs != null ? p.startDelayMs : 0,
+      spawnEveryMs: p.spawnEveryMs != null ? p.spawnEveryMs : 700,
       fallDurationMinMs:
         p.fallDurationMinMs != null ? p.fallDurationMinMs : 11000,
       fallDurationMaxMs:
         p.fallDurationMaxMs != null ? p.fallDurationMaxMs : 16000,
-      maxOnScreen: p.maxOnScreen != null ? p.maxOnScreen : 12,
+      maxOnScreen: p.maxOnScreen != null ? p.maxOnScreen : 8,
+      maxInTopThird: p.maxInTopThird != null ? p.maxInTopThird : 3,
+      minLaneSepPct: p.minLaneSepPct != null ? p.minLaneSepPct : 16,
     };
   }
+
+  function resolvePolaroidImages(p) {
+    if (Array.isArray(p.images) && p.images.filter(Boolean).length) {
+      return p.images.filter(Boolean);
+    }
+    const count = Math.max(0, Number(p.photoCount) || 0);
+    const pattern = p.photoPattern || "photos/photo-{n}.jpg";
+    const out = [];
+    for (let i = 1; i <= count; i++) {
+      out.push(pattern.replace(/\{n\}/g, String(i)));
+    }
+    return out;
+  }
+
 
   function clearPolaroidTimers() {
     polaroidTimers.forEach((id) => window.clearTimeout(id));
@@ -825,22 +840,37 @@ const CONFIG = {
     }
   }
 
+  let polaroidDeck = [];
+
+  function shuffleInPlace(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+    }
+    return arr;
+  }
+
+  function refillPolaroidDeck(images) {
+    polaroidDeck = shuffleInPlace(images.slice());
+  }
+
   function nextPolaroidSrc(images) {
     if (!images.length) return null;
-    const src = images[polaroidImgCursor % images.length];
-    polaroidImgCursor += 1;
-    return src;
+    if (!polaroidDeck.length) refillPolaroidDeck(images);
+    return polaroidDeck.pop();
   }
 
   function randBetween(min, max) {
     return min + Math.random() * (max - min);
   }
 
-  /* 6 vertical lanes; empty-lane only; ≥28–32% horizontal gap; avoid top-third bunching */
-  const POLAROID_LANES = [4, 12, 20, 28, 36, 44, 52, 60, 68, 76, 84, 92];
+  const POLAROID_LANES = [6, 14, 22, 30, 38, 46, 54, 62, 70, 78, 86, 94];
 
   function getActivePolaroidsMeta() {
     if (!els.polaroidRain) return [];
+    const now = Date.now();
     return Array.from(els.polaroidRain.querySelectorAll(".polaroid")).map(
       (node) => {
         const rawLeft = node.dataset.left;
@@ -850,9 +880,11 @@ const CONFIG = {
           : parseFloat(node.style.left) || 0;
         const rawLane = node.dataset.lane;
         const parsedLane = rawLane != null ? parseFloat(rawLane) : NaN;
+        const born = parseFloat(node.dataset.born) || now;
         return {
           left: left,
           lane: !Number.isNaN(parsedLane) ? parsedLane : null,
+          ageMs: now - born,
         };
       }
     );
@@ -876,40 +908,35 @@ const CONFIG = {
     return count;
   }
 
-  /* Prefer empty lanes; if full, still place with min separation for denser screen */
-  function pickPolaroidLane(activeMeta) {
-    const minSep = randBetween(8, 12);
-    const occupied = new Set();
+  /* 간격 부족하면 스킵 — 억지로 겹쳐 놓지 않음 */
+  function pickPolaroidLane(activeMeta, minSep) {
+    const sep = minSep != null ? minSep : 16;
+    const occupiedRecent = new Set();
     const activeLefts = [];
     activeMeta.forEach((m) => {
       activeLefts.push(m.left);
-      if (m.lane != null) occupied.add(m.lane);
+      if (m.lane != null && m.ageMs < 2200) occupiedRecent.add(m.lane);
     });
 
-    const emptyLanes = POLAROID_LANES.filter((lane) => !occupied.has(lane));
+    const emptyLanes = POLAROID_LANES.filter((lane) => !occupiedRecent.has(lane));
     const pool = (emptyLanes.length ? emptyLanes : POLAROID_LANES.slice())
       .slice()
       .sort(() => Math.random() - 0.5);
 
-    for (let i = 0; i < pool.length; i++) {
-      const lane = pool[i];
-      const jittered = lane + randBetween(-2.5, 2.5);
-      const left = Math.max(2, Math.min(90, jittered));
-      if (activeLefts.every((a) => Math.abs(a - left) >= minSep)) {
-        return { left: left, lane: lane };
-      }
-    }
-    /* last resort: farthest from neighbors for denser feel */
     let best = null;
     let bestScore = -1;
-    for (let i = 0; i < POLAROID_LANES.length; i++) {
-      const lane = POLAROID_LANES[i];
-      const left = Math.max(2, Math.min(90, lane + randBetween(-2, 2)));
-      const score = activeLefts.length
-        ? Math.min.apply(null, activeLefts.map((a) => Math.abs(a - left)))
+    for (let i = 0; i < pool.length; i++) {
+      const lane = pool[i];
+      const left = Math.max(3, Math.min(88, lane + randBetween(-1.8, 1.8)));
+      const nearest = activeLefts.length
+        ? Math.min.apply(
+            null,
+            activeLefts.map((a) => Math.abs(a - left))
+          )
         : 99;
-      if (score > bestScore) {
-        bestScore = score;
+      if (nearest < sep) continue;
+      if (nearest > bestScore) {
+        bestScore = nearest;
         best = { left: left, lane: lane };
       }
     }
@@ -922,9 +949,13 @@ const CONFIG = {
     if (onScreen >= cfg.maxOnScreen) return;
 
     const isStatic = !!(opts && opts.static);
-    if (!isStatic && countPolaroidsInTopThird() >= 6) return;
+    const topMax = cfg.maxInTopThird != null ? cfg.maxInTopThird : 3;
+    if (!isStatic && countPolaroidsInTopThird() >= topMax) return;
 
-    const pick = pickPolaroidLane(getActivePolaroidsMeta());
+    const pick = pickPolaroidLane(
+      getActivePolaroidsMeta(),
+      cfg.minLaneSepPct != null ? cfg.minLaneSepPct : 16
+    );
     if (!pick) return;
 
     const src = nextPolaroidSrc(cfg.images);
@@ -993,6 +1024,7 @@ const CONFIG = {
     const cfg = polaroidConfig();
     if (!cfg.enabled || !cfg.images.length || !els.polaroidRain) return;
 
+    refillPolaroidDeck(cfg.images);
     polaroidActive = true;
     els.polaroidRain.classList.add("is-active");
 

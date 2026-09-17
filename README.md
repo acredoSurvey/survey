@@ -106,3 +106,12 @@ proposalBody:
    예: `https://PUBLIC_BASE_URL/og-image-wide.jpg` → `https://my-survey.netlify.app/og-image-wide.jpg`
 3. 공유용 이미지는 `og-image-wide.jpg` (1200×630), 원본 느낌은 `og-image.jpg`입니다.
 4. 배포 직후엔 카카오 캐시 때문에 예전 미리보기가 남을 수 있습니다. [카카오 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 URL 스크랩을 다시 요청하세요.
+
+
+## 폴라로이드 사진 많이 넣기
+
+1. `photos/photo-1.jpg`, `photo-2.jpg`, … 처럼 번호 순으로 넣기 (비율 **4:5**, 가로 600–800px 권장)
+2. `app.js`의 `CONFIG.polaroids.photoCount`를 장 수에 맞게 올리기 (예: 50)
+3. 파일명이 다르면 `images: ["photos/a.jpg", ...]`에 직접 나열
+
+많이 넣어도 화면에는 동시에 적게 뜨고, 가로·세로 간격이 부족하면 스킵해서 최대한 안 겹치게 떨어집니다. 한 바퀴 돌 때까지 같은 사진이 반복되지 않게 섞어서 씁니다.
