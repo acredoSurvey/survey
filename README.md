@@ -95,3 +95,14 @@ proposalBody:
 - 랜딩·설문에는 `logo.png`를 쓰고, **프러포즈 화면에서는 로고를 숨깁니다**
 
 행운을 빕니다. ♥
+
+
+## 카카오톡 링크 미리보기 (이미지)
+
+카카오톡은 **공개된 https 주소**의 페이지를 읽어 `og:image`를 보여 줍니다. `index.html`을 폰에서 직접 열면 미리보기가 나오지 않습니다.
+
+1. 이 폴더 전체를 Netlify / Vercel / GitHub Pages 등에 배포하세요.
+2. `index.html`에서 `PUBLIC_BASE_URL`을 실제 도메인으로 바꿉니다.  
+   예: `https://PUBLIC_BASE_URL/og-image-wide.jpg` → `https://my-survey.netlify.app/og-image-wide.jpg`
+3. 공유용 이미지는 `og-image-wide.jpg` (1200×630), 원본 느낌은 `og-image.jpg`입니다.
+4. 배포 직후엔 카카오 캐시 때문에 예전 미리보기가 남을 수 있습니다. [카카오 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 URL 스크랩을 다시 요청하세요.

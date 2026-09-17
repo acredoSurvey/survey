@@ -2,6 +2,10 @@
    CONFIG — 여기를 수정해서 프러포즈 문구·설문을 쉽게 바꿔 주세요
    ============================================================================= */
 const CONFIG = {
+  /* 카카오톡 링크 미리보기: 사이트를 https로 배포한 뒤, index.html의 PUBLIC_BASE_URL을
+     그 주소(예: https://xxxx.netlify.app)로 모두 바꿔 주세요. 로컬 파일 열기는 미리보기 불가. */
+  publicBaseUrl: "",
+
   /* 이름 — partnerName을 프로포즈·축하에 고정 사용 */
   yourName: "다빈",
   partnerName: "유그린",
