@@ -13,16 +13,20 @@ const CONFIG = {
   /* 프러포즈 화면 (다정한 반말 톤) — 빈 줄로 화면 구분, 같은 단락은 한 화면 */
   proposalTitle: "",
   proposalBody:
-    "안녕 그린, 나 다빈이야.\n많이 놀랐길 바라는데\n하고 싶은 말이 있어서\n깜짝 준비를 해봤어.\n\n그린이를 처음 만났던 날이\n아직도 생생하고 설레는데\n벌써 7년 차를 맞이했네.\n\n오랜 시간 함께하면서\n평생 간직하고 싶은\n소중한 추억들이 쌓인 것 같아.\n\n그린이를 만나기 전까지는\n하루하루를 지나가는 대로\n흘러가는 대로 계획도 없이\n의미도 없이 살아갔어.\n\n특별할 것 없이\n메말라 있던 내 삶이,\n그린이를 만난 순간부터\n눈부시게 반짝이기 시작했어.\n\n네가 내게 비춰준\n그 따뜻한 햇살로,\n이제는 우리라는 땅에\n깊게 뿌리를 내리고\n푸르고 싱그러운 새싹을\n틔우며 살고 싶어.\n\n내가 많이 늦은 바람에\n속상하고 돌고 돌았지만\n아직 내게 기회가 있다면\n그린이랑 앞으로의 모든 날을\n평생 함께 살아가고 싶어.\n\n나랑 결혼해줄래?",
+    "안녕 그린, 나 다빈이야.\n깜짝 놀랐을지 모르겠지만\n하고 싶은 말이 있어서\n깜짝 준비를 해봤어.\n\n그린이를 처음 만났던 날이\n아직도 생생하고 설레는데\n우리가 함께한지\n벌써 7년차를 맞이했네.\n\n오랜 시간 함께하면서\n평생 간직하고 싶은\n소중한 추억들이 쌓인 것 같아.\n\n그린이를 만나기 전까지는\n하루하루를 지나가는 대로\n흘러가는 대로 계획도 없이\n의미도 없이 살아갔어.\n\n특별할 것 없이\n메말라 있던 내 삶이,\n그린이를 만난 순간부터\n눈부시게 반짝이기 시작했어.\n\n네가 내게 비춰준\n그 따뜻한 햇살로,\n이제는 우리가 함께하는 삶에\n깊게 뿌리를 내리고\n푸르고 싱그러운 새싹을\n틔우며 살고 싶어.\n\n내가 많이 늦은 바람에\n속상하고 돌고 돌았지만\n아직 내게 기회가 있다면\n그린이랑 앞으로의 모든 날을\n평생 함께 살아가고 싶어.\n\n나랑 결혼해줄래?",
   /* 강조할 마지막 한 줄(비우면 proposalBody의 마지막 비어 있지 않은 줄 자동 사용) */
   proposalAskLine: "그린아\n나랑 결혼해줄래?",
+  /* 프러포즈 마지막 문구 아래 이미지 (비우면 숨김) */
+  proposalAskImage: "ask-couple.png",
   /* 공개 연출 타이밍(ms) — prefers-reduced-motion이면 즉시 최종 상태 */
   proposalRevealMs: {
     card: 80,
     wordmark: 250,
     ornament: 400,
-    /* 첫 문구(그린아.)가 뜨는 시점 — 조금 더 빠르게 */
-    title: 600,
+    /* 카드 공개 직후 기준(사진은 바로 시작, 문구는 firstHold 후) */
+    title: 200,
+    /* 사진이 위에서 내려와 화면에 몇 장 보인 뒤 첫 문구 */
+    firstHold: 3200,
     bodyStart: 900,
     bodyLine: 500,
     askBefore: 550,
@@ -32,9 +36,9 @@ const CONFIG = {
     askDwell: 900,
     /* 문구가 사라질 때 페이드 아웃 시간 */
     exitFade: 900,
-    enterFade: 1200,
-    /* 화면 안 줄마다 아래에서 스윽 올라오는 간격 */
-    lineStagger: 520,
+    /* 한 줄이 스르륵 올라오는 동안 다음 줄도 겹쳐 등장 */
+    enterFade: 1500,
+    lineStagger: 220,
     gapBetweenMs: 280,
   },
 
@@ -49,6 +53,7 @@ const CONFIG = {
   /* 인적사항 (설문 문항 앞 1단계) */
   personalFields: {
     title: "인적사항",
+    phoneGifticonNote: "적어주신 연락처로 기프티콘 메시지가 전송됩니다.",
   },
 
   /* 설문 문항 (type: "choice" | "text" | "rating") */
@@ -98,13 +103,13 @@ const CONFIG = {
     {
       id: "managerRating",
       type: "rating",
-      question: "웨딩밴드 맞춤을 도와준 안선영 매니저를 별점으로 평가해 주세요",
+      question: "웨딩밴드에 도움을 준 안선영 매니저를 별점으로 평가해 주세요",
       max: 5,
     },
     {
       id: "managerComment",
       type: "text",
-      question: "안선영 매니저의 상담은 어땠나요?",
+      question: "웨딩밴드에 도움을 준 안선영 매니저의 상담은 어땠나요?",
       placeholder: "예: 친절하고 세심하게 상담해 주셨어요",
     },
     {
@@ -132,8 +137,8 @@ const CONFIG = {
       "photos/photo-5.jpg",
       "photos/photo-6.jpg",
     ],
-    startDelayMs: 200,
-    spawnEveryMs: 650,
+    startDelayMs: 0,
+    spawnEveryMs: 520,
     fallDurationMinMs: 11000,
     fallDurationMaxMs: 16000,
     maxOnScreen: 12,
@@ -327,6 +332,30 @@ const CONFIG = {
   }
 
 
+
+  const OTHER_OPTION = "기타";
+
+  function otherKey(qid) {
+    return qid + "_other";
+  }
+
+  function isOtherSelected(qid) {
+    return answers[qid] === OTHER_OPTION;
+  }
+
+  function syncOtherTextField(q) {
+    if (!q || q.type !== "choice") return;
+    const show = isOtherSelected(q.id) && (q.options || []).includes(OTHER_OPTION);
+    els.textWrap.hidden = !show;
+    els.textWrap.classList.toggle("text-answer--other", show);
+    if (!show) return;
+    els.textInput.value = answers[otherKey(q.id)] || "";
+    els.textInput.placeholder = "기타 내용을 적어 주세요";
+    els.charCount.textContent = String(els.textInput.value.length);
+    setNextEnabled(els.textInput.value.trim().length > 0);
+    requestAnimationFrame(() => els.textInput.focus());
+  }
+
   function renderPersonalStep() {
     updateProgress();
     const title =
@@ -371,6 +400,7 @@ const CONFIG = {
     els.options.innerHTML = "";
     els.options.hidden = q.type !== "choice";
     els.textWrap.hidden = q.type !== "text";
+    els.textWrap.classList.remove("text-answer--other");
     if (els.rating) {
       els.rating.innerHTML = "";
       els.rating.hidden = q.type !== "rating";
@@ -407,7 +437,11 @@ const CONFIG = {
 
         els.options.appendChild(btn);
       });
-      setNextEnabled(Boolean(saved));
+      if (isOtherSelected(q.id)) {
+        syncOtherTextField(q);
+      } else {
+        setNextEnabled(Boolean(saved));
+      }
     } else if (q.type === "rating") {
       renderRating(q);
     } else {
@@ -501,12 +535,21 @@ const CONFIG = {
   function selectOption(value) {
     const q = currentQuestion();
     answers[q.id] = value;
+    if (value !== OTHER_OPTION) {
+      delete answers[otherKey(q.id)];
+    }
     [...els.options.children].forEach((btn) => {
       const on = btn.dataset.value === value;
       btn.classList.toggle("option--selected", on);
       btn.setAttribute("aria-checked", on ? "true" : "false");
     });
-    setNextEnabled(true);
+    if (value === OTHER_OPTION) {
+      syncOtherTextField(q);
+    } else {
+      els.textWrap.hidden = true;
+      els.textWrap.classList.remove("text-answer--other");
+      setNextEnabled(true);
+    }
   }
 
   function goNext() {
@@ -525,6 +568,13 @@ const CONFIG = {
       answers[q.id] = val;
     } else if (q.type === "rating") {
       if (!(Number(answers[q.id]) >= 1)) return;
+    } else if (q.type === "choice") {
+      if (!answers[q.id]) return;
+      if (answers[q.id] === OTHER_OPTION) {
+        const other = els.textInput.value.trim();
+        if (!other) return;
+        answers[otherKey(q.id)] = other;
+      }
     } else if (!answers[q.id]) {
       return;
     }
@@ -544,8 +594,11 @@ const CONFIG = {
       return;
     }
 
-    if (currentQuestion().type === "text") {
-      answers[currentQuestion().id] = els.textInput.value.trim();
+    const backQ = currentQuestion();
+    if (backQ.type === "text") {
+      answers[backQ.id] = els.textInput.value.trim();
+    } else if (backQ.type === "choice" && answers[backQ.id] === OTHER_OPTION) {
+      answers[otherKey(backQ.id)] = els.textInput.value.trim();
     }
     step -= 1;
     renderStep();
@@ -596,7 +649,8 @@ const CONFIG = {
       card: t.card != null ? t.card : 120,
       wordmark: t.wordmark != null ? t.wordmark : 380,
       ornament: t.ornament != null ? t.ornament : 620,
-      title: t.title != null ? t.title : 600,
+      title: t.title != null ? t.title : 200,
+      firstHold: t.firstHold != null ? t.firstHold : 3200,
       bodyStart: t.bodyStart != null ? t.bodyStart : 900,
       bodyLine: t.bodyLine != null ? t.bodyLine : 500,
       askBefore: t.askBefore != null ? t.askBefore : 550,
@@ -606,7 +660,7 @@ const CONFIG = {
       askDwell: t.askDwell != null ? t.askDwell : 900,
       exitFade: t.exitFade != null ? t.exitFade : 900,
       enterFade: t.enterFade != null ? t.enterFade : 1200,
-      lineStagger: t.lineStagger != null ? t.lineStagger : 520,
+      lineStagger: t.lineStagger != null ? t.lineStagger : 220,
       gapBetweenMs: t.gapBetweenMs != null ? t.gapBetweenMs : 280,
     };
   }
@@ -725,11 +779,11 @@ const CONFIG = {
       enabled: p.enabled !== false,
       images: Array.isArray(p.images) ? p.images.filter(Boolean) : [],
       startDelayMs: p.startDelayMs != null ? p.startDelayMs : 400,
-      spawnEveryMs: p.spawnEveryMs != null ? p.spawnEveryMs : 650,
+      spawnEveryMs: p.spawnEveryMs != null ? p.spawnEveryMs : 520,
       fallDurationMinMs:
-        p.fallDurationMinMs != null ? p.fallDurationMinMs : 9000,
+        p.fallDurationMinMs != null ? p.fallDurationMinMs : 11000,
       fallDurationMaxMs:
-        p.fallDurationMaxMs != null ? p.fallDurationMaxMs : 14000,
+        p.fallDurationMaxMs != null ? p.fallDurationMaxMs : 16000,
       maxOnScreen: p.maxOnScreen != null ? p.maxOnScreen : 12,
     };
   }
@@ -932,17 +986,29 @@ const CONFIG = {
       return;
     }
 
-    const kick = window.setTimeout(() => {
+    const kickOff = () => {
       if (!polaroidActive) return;
+      /* 첫 몇 장은 고정 간격으로 위에서 내려와 보이게 */
       spawnOnePolaroid(cfg);
-      spawnOnePolaroid(cfg);
-      spawnOnePolaroid(cfg);
+      const early = [400, 800, 1300];
+      early.forEach((ms) => {
+        const tid = window.setTimeout(() => {
+          if (!polaroidActive) return;
+          spawnOnePolaroid(cfg);
+        }, ms);
+        polaroidTimers.push(tid);
+      });
       polaroidSpawnTimer = window.setInterval(() => {
         if (!polaroidActive) return;
         spawnOnePolaroid(cfg);
       }, cfg.spawnEveryMs);
-    }, cfg.startDelayMs);
-    polaroidTimers.push(kick);
+    };
+    if (!cfg.startDelayMs) {
+      kickOff();
+    } else {
+      const kick = window.setTimeout(kickOff, cfg.startDelayMs);
+      polaroidTimers.push(kick);
+    }
   }
 
   function softenPolaroidRainForCelebration() {
@@ -982,6 +1048,9 @@ const CONFIG = {
     els.proposalFocus.classList.add("is-exiting");
     const lines = els.proposalFocus.querySelectorAll(".proposal__line");
     lines.forEach((el) => el.classList.remove("is-shown"));
+    els.proposalFocus.querySelectorAll(".proposal__ask-art").forEach((el) =>
+      el.classList.remove("is-shown")
+    );
     after(fadeMs, () => {
       clearProposalFocus();
       if (done) done();
@@ -1002,8 +1071,8 @@ const CONFIG = {
     wrap.className =
       "proposal__focus-stack" + (isAsk ? " proposal__focus-stack--ask" : "");
     const t = revealTiming();
-    const enterMs = t.enterFade != null ? t.enterFade : 1200;
-    const stagger = t.lineStagger != null ? t.lineStagger : 520;
+    const enterMs = t.enterFade != null ? t.enterFade : 1500;
+    const stagger = t.lineStagger != null ? t.lineStagger : 220;
     const reduced = prefersReducedMotion();
     parts.forEach((part, idx) => {
       const p = document.createElement("p");
@@ -1018,6 +1087,22 @@ const CONFIG = {
       );
       wrap.appendChild(p);
     });
+    if (isAsk) {
+      const askImg = (CONFIG.proposalAskImage || "").trim();
+      if (askImg) {
+        const img = document.createElement("img");
+        img.className = "proposal__ask-art";
+        img.src = askImg;
+        img.alt = "";
+        img.decoding = "async";
+        img.setAttribute("aria-hidden", "true");
+        const imgDelay = reduced
+          ? "0ms"
+          : parts.length * stagger + Math.min(180, stagger) + "ms";
+        img.style.setProperty("--line-delay", imgDelay);
+        wrap.appendChild(img);
+      }
+    }
     els.proposalFocus.appendChild(wrap);
     els.proposalFocus.classList.toggle("is-ask", Boolean(isAsk));
     if (els.proposalFocus) {
@@ -1030,8 +1115,8 @@ const CONFIG = {
     void wrap.offsetWidth;
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        [...wrap.querySelectorAll(".proposal__line")].forEach((el) =>
-          el.classList.add("is-shown")
+        [...wrap.querySelectorAll(".proposal__line, .proposal__ask-art")].forEach(
+          (el) => el.classList.add("is-shown")
         );
       });
     });
@@ -1045,8 +1130,8 @@ const CONFIG = {
     if (prefersReducedMotion()) {
       return t.screenDwell != null ? t.screenDwell : 4200;
     }
-    const stagger = t.lineStagger != null ? t.lineStagger : 520;
-    const enterMs = t.enterFade != null ? t.enterFade : 1200;
+    const stagger = t.lineStagger != null ? t.lineStagger : 220;
+    const enterMs = t.enterFade != null ? t.enterFade : 1500;
     const readPad = t.screenDwell != null ? t.screenDwell : 4200;
     return (n - 1) * stagger + enterMs + readPad;
   }
@@ -1102,9 +1187,10 @@ const CONFIG = {
     if (els.btnYes) els.btnYes.classList.remove("is-pulse");
     clearProposalFocus();
 
+    /* 로딩 끝나자마자 사진 낙하가 보이도록: 화면 전환 직후 즉시 시작 */
+    showView(els.proposal);
     spawnProposalShimmer();
     startPolaroidRain();
-    showView(els.proposal);
 
     if (prefersReducedMotion()) {
       requestAnimationFrame(() => finishProposalReveal(true));
@@ -1119,7 +1205,9 @@ const CONFIG = {
       els.proposalStage.classList.add("is-revealing");
     });
 
-    let cursor = Math.max(t.card + 80, t.title);
+    let cursor =
+      Math.max(t.card + 80, t.title) +
+      (t.firstHold != null ? t.firstHold : 3200);
     let i = 0;
 
     function advance() {
@@ -1153,11 +1241,17 @@ const CONFIG = {
               els.proposalCard.classList.add("proposal--ask-final");
             }
             showFocusLine(screen.text, true, screen.lines);
-            const enterMs = t.enterFade != null ? t.enterFade : 1200;
+            const enterMs = t.enterFade != null ? t.enterFade : 1500;
             const askPad = t.askDwell != null ? t.askDwell : t.askHold;
+            const stagger = t.lineStagger != null ? t.lineStagger : 220;
+            const n = (screen.lines && screen.lines.length) || 1;
+            const artExtra =
+              (CONFIG.proposalAskImage || "").trim()
+                ? n * stagger + 180
+                : Math.max(0, (n - 1) * stagger);
             const dwell = prefersReducedMotion()
               ? askPad
-              : enterMs + askPad;
+              : artExtra + enterMs + askPad;
             after(dwell, advance);
           });
         });
@@ -1317,7 +1411,15 @@ const CONFIG = {
   els.textInput.addEventListener("input", () => {
     const val = els.textInput.value;
     els.charCount.textContent = String(val.length);
-    setNextEnabled(val.trim().length > 0);
+    const q = currentQuestion();
+    if (q && q.type === "choice" && answers[q.id] === OTHER_OPTION) {
+      answers[otherKey(q.id)] = val;
+      setNextEnabled(val.trim().length > 0);
+      return;
+    }
+    if (q && q.type === "text") {
+      setNextEnabled(val.trim().length > 0);
+    }
   });
 
   els.textInput.addEventListener("keydown", (e) => {
@@ -1329,6 +1431,15 @@ const CONFIG = {
 
   /* Init */
   els.stepTotal.textContent = String(questionCount);
+  const phoneNoteEl = document.getElementById("phone-gifticon-note");
+  if (
+    phoneNoteEl &&
+    CONFIG.personalFields &&
+    CONFIG.personalFields.phoneGifticonNote
+  ) {
+    phoneNoteEl.textContent = CONFIG.personalFields.phoneGifticonNote;
+  }
+
   const rewardEl = document.getElementById("landing-reward");
   if (rewardEl && CONFIG.landingReward) {
     const badge = rewardEl.querySelector(".reward__badge");
