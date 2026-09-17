@@ -42,6 +42,7 @@ python3 -m http.server 8080
 | `questions` | 설문 문항·선택지 |
 | `yourName` / `partnerName` | 선택 사항 (비워둬도 됨; 인적사항 이름 우선) |
 | `interstitialMs` | 중간 로딩 시간(밀리초, 기본 2500) |
+| `polaroids` | 프러포즈 배경 폴라로이드 낙하. `enabled`, `images`(경로 배열), `startDelayMs` / `spawnEveryMs` / `fallDurationMinMs`–`MaxMs` / `maxOnScreen` |
 
 예시:
 
@@ -60,10 +61,10 @@ proposalBody:
 ## 흐름 요약
 
 1. **랜딩** — acredo 워드마크 + 설문 초대 → 「설문 시작하기」
-2. **인적사항** (1/9) — 이름·연락처(필수), 이메일(선택), 방문/상담 목적(선택 텍스트)
-3. **8문항 설문** (2/9–9/9) — 진행 표시, 이전/다음, 선택·텍스트 입력
+2. **인적사항** (1/11) — 이름·연락처(필수), 이메일(선택), 방문/상담 목적(선택 텍스트)
+3. **10문항 설문** (2/11–11/11) — 진행 표시, 이전/다음, 선택·별점·텍스트 입력
 4. **중간 화면** — “두 분만의 이야기를 정리하고 있어요…” (~2.5초)
-5. **프러포즈** — 한 문구씩 전체 화면으로 자동 전환 → 마지막에 질문만 강조 → 「네」 / 「한 번 더 생각해볼게요」 (로고 없음)
+5. **프러포즈** — 한 문구씩 전체 화면으로 자동 전환(배경에 폴라로이드 사진 낙하) → 마지막에 질문만 강조 → 「좋아」 (로고 없음)
 6. **축하** — 「네」 선택 시 풀스크린 하트·골드 컨페티 (이름이 있으면 두 번째 줄로 부드럽게 호명)
 
 인적사항·답변은 브라우저 메모리에만 두고, 외부로 보내지 않습니다.
@@ -71,9 +72,21 @@ proposalBody:
 ## 기술 참고
 
 - HTML / CSS / JS만 사용 (빌드·npm·프레임워크 없음)
-- Google Fonts: Cormorant Garamond, Noto Sans KR
+- Google Fonts: Noto Serif KR, Cormorant Garamond, Pretendard
 - `prefers-reduced-motion` 지원 (프러포즈 연출은 즉시 최종 상태 또는 소프트 페이드만)
 - 데이터는 브라우저 메모리에만 잠시 두고, 외부로 보내지 않습니다
+
+
+## 폴라로이드 사진 바꾸기
+
+프러포즈 공개 중 배경에 폴라로이드 프레임 사진이 천천히 떨어집니다 (문구 뒤, `pointer-events: none`, 반투명).
+
+1. **파일 교체** — `photos/photo-1.jpg` … `photo-6.jpg`를 실제 커플 사진으로 덮어쓰세요 (세로 ~4:5 권장).
+2. **경로·개수 변경** — `app.js`의 `CONFIG.polaroids.images` 배열을 수정하세요.
+3. **끄기** — `CONFIG.polaroids.enabled = false`.
+4. **연출 속도** — `startDelayMs`, `spawnEveryMs`, `fallDurationMinMs` / `fallDurationMaxMs`, `maxOnScreen`을 조정하세요.
+
+설문 화면에는 나오지 않고, 프러포즈(및 「좋아」 후 축하)에서만 재생됩니다. `prefers-reduced-motion`이면 낙하 대신 흐린 정적 폴라로이드 1–2장이 표시됩니다.
 
 ## 팁
 
